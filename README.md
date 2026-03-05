@@ -49,23 +49,6 @@ Built with a scalable SQL schema and designed for deployment in both local and p
 
 ---
 
- %% Relationships
-    Business ||--o{ BusinessDocument : "has"
-    Business ||--o{ TradeLicense : "owns"
-    TradeLicense ||--o{ LicenseDocument : "contains"
-    Business ||--o{ BusinessTransaction : "performs"
-    BusinessTransaction ||--o{ MarketRecord : "logged"
-    TradeProgram ||--o{ Resource : "allocates"
-    TradeLicense ||--o{ ComplianceRecord : "linked"
-    TradeProgram ||--o{ ComplianceRecord : "linked"
-    BusinessTransaction ||--o{ ComplianceRecord : "linked"
-    Audit ||--o{ AuditLog : "records"
-    SystemUser ||--o{ AuditLog : "performs"
-    SystemUser ||--o{ MarketRecord : "monitors"
-    SystemUser ||--o{ Notification : "receives"
-
----
-
 ## 🛠️ Tech Stack
 - **Frontend**: Angular / React  
 - **Backend**: Spring Boot / .NET Core  

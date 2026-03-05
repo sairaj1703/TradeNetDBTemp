@@ -64,8 +64,7 @@ A modular platform to manage **business registrations, trade licenses, transacti
 
 ## 📈 Future Enhancements
 - Role-based dashboards with analytics  
-- Automated compliance alerts  
-- AI-driven trade program efficiency insights  
-
+- Automated compliance alerts
+  
 ---
 

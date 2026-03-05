@@ -1,7 +1,6 @@
-# 🌐 Trade Management System
+# 🌐 Trade Management System (TradeNet)
 
 A modular platform to manage **business registrations, trade licenses, transactions, compliance, audits, reporting, and notifications**.  
-Built with a scalable SQL schema and designed for deployment in both local and production environments.
 
 ---
 

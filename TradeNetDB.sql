@@ -1,11 +1,11 @@
-CREATE DATABASE IF NOT EXISTS tradenet;
+CREATE DATABASE tradenet;
 USE tradenet;
 
 -- =============================================
 -- USER MANAGEMENT TABLE
 -- =============================================
-CREATE TABLE IF NOT EXISTS User (
-    UserID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE SystemUser (
+    UserID INT PRIMARY KEY IDENTITY(1,1),
     Name VARCHAR(100) NOT NULL,
     Role VARCHAR(50),
     Email VARCHAR(100) UNIQUE,
@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS User (
 -- =============================================
 -- BUSINESS TABLES
 -- =============================================
-CREATE TABLE IF NOT EXISTS Business (
-    BusinessID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE Business (
+    BusinessID INT PRIMARY KEY IDENTITY(1,1),
     Name VARCHAR(100) NOT NULL,
     Type VARCHAR(50),
     Address VARCHAR(200),
@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS Business (
     CreatedDate DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS BusinessDocument (
-    DocumentID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE BusinessDocument (
+    DocumentID INT PRIMARY KEY IDENTITY(1,1),
     BusinessID INT NOT NULL,
     DocType VARCHAR(50),
     FileURI VARCHAR(200),
@@ -40,8 +40,8 @@ CREATE TABLE IF NOT EXISTS BusinessDocument (
 -- =============================================
 -- LICENSE TABLES
 -- =============================================
-CREATE TABLE IF NOT EXISTS TradeLicense (
-    LicenseID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE TradeLicense (
+    LicenseID INT PRIMARY KEY IDENTITY(1,1),
     BusinessID INT NOT NULL,
     Type VARCHAR(50),
     IssuedDate DATE,
@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS TradeLicense (
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS LicenseDocument (
-    DocumentID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE LicenseDocument (
+    DocumentID INT PRIMARY KEY IDENTITY(1,1),
     LicenseID INT NOT NULL,
     DocType VARCHAR(50),
     FileURI VARCHAR(200),
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS LicenseDocument (
 -- =============================================
 -- TRANSACTION TABLES
 -- =============================================
-CREATE TABLE IF NOT EXISTS Transaction (
-    TransactionID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE BusinessTransaction (
+    TransactionID INT PRIMARY KEY IDENTITY(1,1),
     BusinessID INT NOT NULL,
     Type VARCHAR(50),
     Amount DECIMAL(15,2),
@@ -73,22 +73,22 @@ CREATE TABLE IF NOT EXISTS Transaction (
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS MarketRecord (
-    RecordID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE MarketRecord (
+    RecordID INT PRIMARY KEY IDENTITY(1,1),
     TransactionID INT NOT NULL,
     OfficerID INT NOT NULL,
     Notes TEXT,
     Date DATE,
     Status VARCHAR(50),
-    FOREIGN KEY (TransactionID) REFERENCES Transaction(TransactionID) ON DELETE CASCADE,
-    FOREIGN KEY (OfficerID) REFERENCES User(UserID) ON DELETE SET NULL
+    FOREIGN KEY (TransactionID) REFERENCES BusinessTransaction(TransactionID) ON DELETE CASCADE,
+    FOREIGN KEY (OfficerID) REFERENCES SystemUser(UserID) ON DELETE SET NULL
 );
 
 -- =============================================
 -- TRADE PROGRAM & RESOURCES
 -- =============================================
-CREATE TABLE IF NOT EXISTS TradeProgram (
-    ProgramID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE TradeProgram (
+    ProgramID INT PRIMARY KEY IDENTITY(1,1),
     Title VARCHAR(100),
     Description TEXT,
     StartDate DATE,
@@ -97,8 +97,8 @@ CREATE TABLE IF NOT EXISTS TradeProgram (
     Status VARCHAR(50)
 );
 
-CREATE TABLE IF NOT EXISTS Resource (
-    ResourceID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE Resource (
+    ResourceID INT PRIMARY KEY IDENTITY(1,1),
     ProgramID INT NOT NULL,
     Type VARCHAR(50),
     Quantity INT,
@@ -109,8 +109,8 @@ CREATE TABLE IF NOT EXISTS Resource (
 -- =============================================
 -- COMPLIANCE & AUDIT TABLES
 -- =============================================
-CREATE TABLE IF NOT EXISTS ComplianceRecord (
-    ComplianceID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE ComplianceRecord (
+    ComplianceID INT PRIMARY KEY IDENTITY(1,1),
     EntityID INT,
     Type VARCHAR(50),
     Result VARCHAR(50),
@@ -121,57 +121,57 @@ CREATE TABLE IF NOT EXISTS ComplianceRecord (
     TransactionID INT,
     FOREIGN KEY (LicenseID) REFERENCES TradeLicense(LicenseID) ON DELETE SET NULL,
     FOREIGN KEY (ProgramID) REFERENCES TradeProgram(ProgramID) ON DELETE SET NULL,
-    FOREIGN KEY (TransactionID) REFERENCES Transaction(TransactionID) ON DELETE SET NULL
+    FOREIGN KEY (TransactionID) REFERENCES BusinessTransaction(TransactionID) ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS Audit (
-    AuditID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE Audit (
+    AuditID INT PRIMARY KEY IDENTITY(1,1),
     OfficerID INT NOT NULL,
     Scope VARCHAR(100),
     Findings TEXT,
     Date DATE,
     Status VARCHAR(50),
-    FOREIGN KEY (OfficerID) REFERENCES User(UserID) ON DELETE RESTRICT
+    FOREIGN KEY (OfficerID) REFERENCES SystemUser(UserID)
 );
 
-CREATE TABLE IF NOT EXISTS AuditLog (
-    AuditLogID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE AuditLog (
+    AuditLogID INT PRIMARY KEY IDENTITY(1,1),
     AuditID INT NOT NULL,
     UserID INT NOT NULL,
     Action VARCHAR(100),
     Resource VARCHAR(100),
     Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (AuditID) REFERENCES Audit(AuditID) ON DELETE CASCADE,
-    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE
+    FOREIGN KEY (UserID) REFERENCES SystemUser(UserID) ON DELETE CASCADE
 );
 
 -- =============================================
 -- NOTIFICATIONS & REPORTING
 -- =============================================
-CREATE TABLE IF NOT EXISTS Notification (
-    NotificationID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE Notification (
+    NotificationID INT PRIMARY KEY IDENTITY(1,1),
     UserID INT NOT NULL,
     EntityID INT,
     Message TEXT,
     Category VARCHAR(50),
     Status VARCHAR(50),
     CreatedDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE
+    FOREIGN KEY (UserID) REFERENCES SystemUser(UserID) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Report (
-    ReportID INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE Report (
+    ReportID INT PRIMARY KEY IDENTITY(1,1),
     Scope VARCHAR(100),
     Metrics TEXT,
-    GeneratedDate DATE DEFAULT CURDATE()
+    GeneratedDate DATE DEFAULT CAST(GETDATE() AS DATE)
 );
 
 -- =============================================
 -- SAMPLE DATA
 -- =============================================
 
--- Insert User Data
-INSERT INTO User (Name, Role, Email, Phone, Status) VALUES 
+-- Insert SystemUser Data
+INSERT INTO SystemUser (Name, Role, Email, Phone, Status) VALUES 
 ('Ravi Kumar', 'Admin', 'ravi.kumar@tradenet.com', '9876543210', 'Active'),
 ('Anita Sharma', 'Officer', 'anita.sharma@tradenet.com', '9123456780', 'Active'),
 ('Sai Raju', 'Manager', 'sai.raju@tradenet.com', '9876543211', 'Active'),
@@ -186,8 +186,8 @@ INSERT INTO Business (Name, Type, Address, ContactInfo, Status) VALUES
 ('Blue Ocean Shipping', 'Logistics', '12 Dockyard Road, Kochi', 'blueocean@shipping.com', 'Inactive'),
 ('Silverline Textiles', 'Manufacturing', '56 Textile Park, Surat', 'silverline@textiles.com', 'Active');
 
--- Insert Transaction Data
-INSERT INTO Transaction (BusinessID, Type, Amount, Date, Status) VALUES
+-- Insert BusinessTransaction Data
+INSERT INTO BusinessTransaction (BusinessID, Type, Amount, Date, Status) VALUES
 (1, 'Sale', 150000.00, '2026-02-15', 'Completed'),
 (2, 'Purchase', 250000.00, '2026-02-20', 'Pending'),
 (3, 'Sale', 100000.00, '2026-02-22', 'Completed'),
@@ -255,7 +255,7 @@ INSERT INTO AuditLog (AuditID, UserID, Action, Resource, Timestamp) VALUES
 (1, 1, 'Reviewed Compliance Report', 'ComplianceRecord', '2026-02-01 10:30:00'),
 (2, 2, 'Validated License', 'TradeLicense', '2026-02-05 11:00:00'),
 (3, 3, 'Created Program', 'TradeProgram', '2026-02-10 09:15:00'),
-(4, 4, 'Checked Transaction', 'Transaction', '2026-02-15 14:45:00'),
+(4, 4, 'Checked Transaction', 'BusinessTransaction', '2026-02-15 14:45:00'),
 (5, 5, 'Reviewed Market Record', 'MarketRecord', '2026-02-20 16:20:00');
 
 -- Insert Notification Data
@@ -285,9 +285,9 @@ INSERT INTO Report (Scope, Metrics, GeneratedDate) VALUES
 -- =============================================
 -- VIEW SAMPLE DATA
 -- =============================================
-SELECT * FROM User;
+SELECT * FROM SystemUser;
 SELECT * FROM Business;
-SELECT * FROM Transaction;
+SELECT * FROM BusinessTransaction;
 SELECT * FROM TradeLicense;
 SELECT * FROM TradeProgram;
 SELECT * FROM Report;

@@ -1,46 +1,35 @@
 # TradeNetFB SQL Server Database
 
 ## 📖 Overview
-This project models a **Trade Governance System** in SQL Server.  
-It manages businesses, licenses, transactions, compliance, audits, and reporting — ensuring trade is transparent and well-documented.
+A simple SQL Server database for managing **trade governance**.  
+It covers businesses, licenses, transactions, compliance, audits, and reporting.
 
 ---
 
-## 🏗️ Database Structure (Visual Explanation)
+## 🏗️ Structure
 
-### Core Entities
-- **Business** → Registered companies.
-- **AppUser** → System users (Admin, Officer, Auditor, etc.).
-- **BusinessTransaction** → Sales and purchases.
-- **TradeLicense** → Permissions granted to businesses.
+- **Business** → Registered companies  
+- **AppUser** → System users (Admin, Officer, Auditor)  
+- **TradeLicense** → Permissions for businesses  
+- **BusinessTransaction** → Sales and purchases  
 
-### Supporting Entities
-- **BusinessDocument** → Certificates and proofs for businesses.
-- **LicenseDocument** → Documents tied to licenses.
-- **TradeProgram** → Government initiatives.
-- **Resource** → Assets allocated to programs.
+Supporting:
+- **BusinessDocument / LicenseDocument** → Proofs & certificates  
+- **TradeProgram / Resource** → Government initiatives & assets  
 
-### Oversight & Governance
-- **ComplianceRecord** → Results of compliance checks.
-- **Audit** → Official inspections.
-- **AuditLog** → Actions taken during audits.
-- **Notification** → Alerts sent to users.
-- **MarketRecord** → Market regulation notes.
-- **Report** → Summaries and analytics.
+Oversight:
+- **ComplianceRecord** → Compliance checks  
+- **Audit / AuditLog** → Inspections & logs  
+- **Notification** → Alerts  
+- **MarketRecord** → Market notes  
+- **Report** → Summaries  
+
 
 ---
 
-## 🔗 Relationships (Textual ER Diagram)
+## 🎯 Key Idea
+- **Business is the hub**  
+- Licenses, transactions, and programs branch out  
+- Documents, compliance, audits, notifications, and reports ensure transparency
 
-Business ──┐
-├── TradeLicense ── LicenseDocument
-├── BusinessTransaction ── MarketRecord
-└── BusinessDocument
 
-TradeProgram ── Resource
-
-ComplianceRecord ── links to License / Program / Transaction
-
-AppUser ──┐
-├── Audit ── AuditLog
-└── Notification
